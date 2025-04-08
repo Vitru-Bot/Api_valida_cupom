@@ -1,0 +1,16 @@
+# Ignora a pasta do ambiente virtual
+venv/
+
+# Ignora arquivos de cache do Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignora arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# Ignora credenciais (ex: arquivos JSON com credenciais da API do Google)
+*.json
+
+
