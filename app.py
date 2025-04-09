@@ -1,12 +1,12 @@
 from flask import Flask, request, jsonify
-from datetime import datetime
+from datetime import datetime, timedelta
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import os
 
 app = Flask(__name__)
 
-# Lista de códigos válidos
+# Lista dos cupons
 base_codigo = [
 "5F7JQ3",
 "K4Z9A7",
@@ -210,21 +210,21 @@ base_codigo = [
 "A1WKJ2"
 ]
 
-# Autenticação com Google Sheets
+# Autenticação com a planilha do sheets
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 creds = ServiceAccountCredentials.from_json_keyfile_name("credenciais.json", scope)
 client = gspread.authorize(creds)
 
 # Acesse a planilha e aba
-sheet = client.open("codigos_usuarios").worksheet("codigos")  # Use o nome correto da aba!
+sheet = client.open("codigos_usuarios").worksheet("codigos")  # coloque o nome da aba da planilha
 
-# Função para salvar novo registro
+# Função para salvar um registro na planilha
 def salvar_no_google_sheets(codigo, telefone):
-    datahora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    datahora = (datetime.utcnow() - timedelta(hours=3)).strftime("%Y-%m-%d %H:%M:%S")
     sheet.append_row([codigo, telefone, datahora])
     return datahora
 
-# Função para verificar se código já foi usado
+# Função para verificar se o cupom existe na planilha
 def codigo_ja_usado(codigo):
     registros = sheet.get_all_records()
     for r in registros:
@@ -232,7 +232,7 @@ def codigo_ja_usado(codigo):
             return r
     return None
 
-# Rota principal da API
+# Rota da API
 @app.route('/validar-codigo', methods=['POST'])
 def validar_codigo():
     dados = request.json
