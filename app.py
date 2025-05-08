@@ -267,6 +267,11 @@ def validar_codigo():
         }
     })
 
+# 🔥 Adicione esta rota GET
+@app.route('/', methods=['GET'])
+def ping():
+    return jsonify({"status": "ok", "mensagem": "API ativa"}), 200
+
 # Execução
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 11000))
